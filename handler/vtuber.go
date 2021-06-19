@@ -3,6 +3,7 @@ package handler
 import (
 	"log"
 	"math/rand"
+	"net/http"
 	"time"
 
 	"github.com/1k-ct/twitter-dem/pkg/database"
@@ -25,11 +26,9 @@ type VtuberType struct {
 
 // FitchRandVtuber /:affiliations/:types 条件に合ったvtuberをランダムに紹介する
 func FitchRandVtuber(c *gin.Context) {
-	// 	/:Affiliations/:types 取得
 	vAffiliation := c.Param("affiliations")
 	vType := c.Param("types")
-	// vAffiliation := "other"
-	// vType := "song"
+
 	config, err := database.NewLocalDB("user", "password", "vtuber")
 	if err != nil {
 		log.Fatal(err)
@@ -65,8 +64,7 @@ func FitchRandVtuber(c *gin.Context) {
 			}
 		}
 	}
-	// fmt.Println(res)
-	// 出力する
+
 	if len(res) == 0 {
 		c.JSON(400, gin.H{"status": "not found vtuber"})
 		return
@@ -78,5 +76,26 @@ func FitchRandVtuber(c *gin.Context) {
 	c.JSON(200, gin.H{"name": vtubers[res[n]-1].Name, "url": url})
 }
 func SearchVtuber(c *gin.Context) {
-	c.JSON(200, gin.H{"status": "ok"})
+	config, err := database.NewLocalDB("user", "password", "vtuber")
+	if err != nil {
+		log.Fatal(err)
+	}
+	db, err := config.Connect()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	q := c.Query("q")
+
+	vtuber := &Vtuber{}
+	vtubers := []*Vtuber{}
+	if err := db.Model(&vtuber).Where("channel_id = ?", q).Find(&vtubers).Error; err != nil {
+		c.JSON(400, gin.H{"status": "not found affiliation"})
+		return
+	}
+	if len(vtubers) == 0 {
+		c.JSON(http.StatusNoContent, nil)
+		return
+	}
+	c.JSON(200, vtubers)
 }
