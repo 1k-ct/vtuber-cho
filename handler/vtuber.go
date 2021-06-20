@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/1k-ct/twitter-dem/pkg/appErrors"
 	"github.com/1k-ct/twitter-dem/pkg/database"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
@@ -88,14 +89,42 @@ func SearchVtuber(c *gin.Context) {
 	q := c.Query("q")
 
 	vtuber := &Vtuber{}
-	vtubers := []*Vtuber{}
-	if err := db.Model(&vtuber).Where("channel_id = ?", q).Find(&vtubers).Error; err != nil {
+	if err := db.Where("channel_id = ?", q).First(&vtuber).Error; err != nil {
 		c.JSON(400, gin.H{"status": "not found affiliation"})
 		return
 	}
-	if len(vtubers) == 0 {
+	if vtuber == nil {
 		c.JSON(http.StatusNoContent, nil)
 		return
 	}
-	c.JSON(200, vtubers)
+	vtuberType := &VtuberType{}
+	vtuberTypes := []*VtuberType{}
+	if err := db.Model(&vtuberType).Where("vtuber_id = ?", vtuber.ID).
+		Find(&vtuberTypes).Error; err != nil {
+		c.JSON(500, appErrors.ErrMeatdataMsg(err, appErrors.ErrRecordDatabase))
+		return
+	}
+
+	types := []string{}
+	for _, v := range vtuberTypes {
+		types = append(types, v.Types)
+	}
+	type resp struct {
+		ID          uint
+		CreatedAt   time.Time
+		UpdatedAt   time.Time
+		Name        string
+		ChannelID   string
+		Affiliation string
+		Types       []string
+	}
+	c.JSON(200, resp{
+		ID:          vtuber.ID,
+		CreatedAt:   vtuber.CreatedAt,
+		UpdatedAt:   vtuber.UpdatedAt,
+		Name:        vtuber.Name,
+		ChannelID:   vtuber.ChannelID,
+		Affiliation: vtuber.Affiliation,
+		Types:       types,
+	})
 }
