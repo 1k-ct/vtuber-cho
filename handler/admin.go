@@ -1,6 +1,9 @@
 package handler
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -12,14 +15,15 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type LoginInfo struct {
-	APIKey string
-}
-type ResponseJson struct {
-	Status  string
-	Message string
-	Data    interface{}
-}
+// type LoginInfo struct {
+// 	APIKey string
+// }
+
+// type ResponseJson struct {
+// 	Status  string
+// 	Message string
+// 	Data    interface{}
+// }
 
 func FitchJwt(c *gin.Context) {
 	apiKey := c.Request.Header.Get("api-key")
@@ -44,6 +48,14 @@ func FitchJwt(c *gin.Context) {
 	}
 	c.JSON(200, tokens)
 }
+
+type RequestVtuber struct {
+	Name        string   `json:"name"`
+	ChannelID   string   `json:"channel_id"`
+	Affiliation string   `json:"affiliation"`
+	Types       []string `json:"types"`
+}
+
 func RegisterVtuber(c *gin.Context) {
 	// ---------------------------
 	config, err := database.NewLocalDB("user", "password", "vtuber")
@@ -56,12 +68,12 @@ func RegisterVtuber(c *gin.Context) {
 	}
 	// -----------------------------
 
-	type RequestVtuber struct {
-		Name        string   `json:"name"`
-		ChannelID   string   `json:"channel_id"`
-		Affiliation string   `json:"affiliation"`
-		Types       []string `json:"types"`
-	}
+	// type RequestVtuber struct {
+	// 	Name        string   `json:"name"`
+	// 	ChannelID   string   `json:"channel_id"`
+	// 	Affiliation string   `json:"affiliation"`
+	// 	Types       []string `json:"types"`
+	// }
 	requestVtuber := &RequestVtuber{}
 
 	if err := c.BindJSON(&requestVtuber); err != nil {
@@ -98,4 +110,57 @@ func RegisterVtuber(c *gin.Context) {
 		}
 	}
 	c.JSON(201, vtuber)
+}
+
+func RegisterVtuberJsonFile(c *gin.Context) {
+	// ---------------------------
+	config, err := database.NewLocalDB("user", "password", "vtuber")
+	if err != nil {
+		log.Fatal(err)
+	}
+	db, err := config.Connect()
+	if err != nil {
+		log.Fatal(err)
+	}
+	// -----------------------------
+	vDataBytes, err := ioutil.ReadFile("./vtuber-data/vtuber-req.json")
+	if err != nil {
+		c.JSON(500, appErrors.ErrMeatdataMsg(err, appErrors.ServerError))
+		return
+	}
+	// jsonVtubers := ([]byte)(vDataBytes)
+	// reqVtubers := []*RequestVtuber{}
+	type reqVtubers struct {
+		Data []RequestVtuber `json:"data"`
+	}
+	reqV := &reqVtubers{}
+	if err := json.Unmarshal(vDataBytes, reqV); err != nil {
+		c.JSON(500, appErrors.ErrMeatdataMsg(err, appErrors.ServerError))
+		return
+	}
+	vtuber := &Vtuber{}
+	vtuberType := &VtuberType{}
+	for _, vd := range reqV.Data {
+		if err := db.Model(vtuber).Where("channel_id = ?", vd.ChannelID).
+			Updates(&Vtuber{
+				Name:        vd.Name,
+				ChannelID:   vd.ChannelID,
+				Affiliation: vd.Affiliation,
+			}).Error; err != nil {
+			c.JSON(500, appErrors.ErrMeatdataMsg(err, appErrors.ErrRecordDatabase))
+			return
+		}
+
+		// db.Model(&VtuberType{}).Where("vtuber_id = ?",vtuber.ID).Find([]VtuberType{})
+		db.Model(vtuberType).Where("vtuber_id = ?", vtuber.ID).Update()
+	}
+	c.JSON(200, gin.H{"status": "ok"})
+}
+func useIoutilReadFile(fileName string) {
+	bytes, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(string(bytes))
 }
