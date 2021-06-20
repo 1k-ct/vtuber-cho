@@ -1,0 +1,31 @@
+{
+    "data": [
+        {
+            "name": "supi",
+            "channel_id": "UC7GmAfdJOtgrmixWwGDvHHg",
+            "affiliation": "other",
+            "types": [
+                "cat",
+                "animal"
+            ]
+        },
+        {
+            "name": "supi2",
+            "channel_id": "UC7GmAfdJOtgrmixWwGDvHHg2",
+            "affiliation": "other",
+            "types": [
+                "cat",
+                "animal"
+            ]
+        },
+        {
+            "name": "supi",
+            "channel_id": "UC7GmAfdJOtgrmixWwGDvHHg3",
+            "affiliation": "other",
+            "types": [
+                "cat",
+                "animal"
+            ]
+        }
+    ]
+}
