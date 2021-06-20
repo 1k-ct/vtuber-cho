@@ -11,6 +11,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/1k-ct/twitter-dem/pkg/database"
 	"github.com/1k-ct/vtuber-cho/handler"
 	"github.com/joho/godotenv"
 )
@@ -45,6 +46,10 @@ func TestReqestVtuberJsonFile(t *testing.T) {
 		log.Fatal(err)
 	}
 	accessToken := os.Getenv("ACCESS_TOKEN")
+	log.Println(accessToken)
+	if accessToken == "" {
+		t.Fatal("no found access_token")
+	}
 	for _, v := range reqVtubers.Data {
 		vData, _ := json.Marshal(v)
 		body, err := testPostVtuber(url, accessToken, vData)
@@ -79,4 +84,24 @@ func testPostVtuber(url, accessToken string, jsonStr []byte) (string, error) {
 	defer resp.Body.Close()
 
 	return string(body), err
+}
+func TestCreateDatabase(t *testing.T) {
+	// ---------------------------
+	config, err := database.NewLocalDB("user", "password", "vtuber")
+	if err != nil {
+		log.Fatal(err)
+	}
+	db, err := config.Connect()
+	if err != nil {
+		log.Fatal(err)
+	}
+	// -----------------------------
+	if err := db.AutoMigrate(handler.Vtuber{}).Error; err != nil {
+		t.Fatal(err)
+	}
+	if err := db.AutoMigrate(handler.VtuberType{}).
+		AddForeignKey("vtuber_id", "vtubers(id)", "CASCADE", "CASCADE").Error; err != nil {
+		t.Fatal(err)
+
+	}
 }
