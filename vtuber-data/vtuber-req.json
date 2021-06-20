@@ -1,30 +1,82 @@
 {
     "data": [
         {
-            "name": "supi",
-            "channel_id": "UC7GmAfdJOtgrmixWwGDvHHg",
+            "name": "A.I.Channel",
+            "channel_id": "UC4YaOt1yT-ZeyB0OmxHgolA",
             "affiliation": "other",
             "types": [
-                "cat",
-                "animal"
+                "song",
+                "3d",
+                "video"
             ]
         },
         {
-            "name": "supi2",
-            "channel_id": "UC7GmAfdJOtgrmixWwGDvHHg2",
-            "affiliation": "other",
+            "name": "Gawr Gura Ch. hololive-EN",
+            "channel_id": "UCoSrY_IQQVpmIRZ9Xf-y93g",
+            "affiliation": "hololive",
             "types": [
                 "cat",
-                "animal"
+                "animal",
+                "song",
+                "english",
+                "loli",
+                "small-breast",
+                "idle-talk"
             ]
         },
         {
-            "name": "supi",
-            "channel_id": "UC7GmAfdJOtgrmixWwGDvHHg3",
+            "name": "Korone Ch. 戌神ころね",
+            "channel_id": "UChAnqc_AY5_I3Px5dig3X1Q",
+            "affiliation": "hololive",
+            "types": [
+                "animal",
+                "song",
+                "game",
+                "big-breast",
+                "idle-talk",
+                "long-stream"
+            ]
+        },
+        {
+            "name": "Pekora Ch. 兎田ぺこら",
+            "channel_id": "UC1DCedRgGHBdm81E1llLhOQ",
+            "affiliation": "hololive",
+            "types": [
+                "animal",
+                "small-breast",
+                "idle-talk",
+                "long-stream"
+            ]
+        },
+        {
+            "name": "A.I.Games",
+            "channel_id": "UCbFwe3COkDrbNsbMyGNCsDg",
             "affiliation": "other",
             "types": [
+                "game",
+                "3d",
+                "video"
+            ]
+        },
+        {
+            "name": "Mori Calliope Ch. hololive-EN",
+            "channel_id": "UCL_qhgtOy0dy1Agp8vkySQg",
+            "affiliation": "hololive",
+            "types": [
+                "english",
+                "song",
+                "anthro",
+                "big-breast"
+            ]
+        },
+        {
+            "name": "フブキCh。白上フブキ",
+            "channel_id": "UCdn5BQ06XqgXoAxIhbqw5Rg",
+            "affiliation": "hololive",
+            "types": [
                 "cat",
-                "animal"
+                "animal",
+                "idle-talk"
             ]
         }
     ]
