@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+  backend:
+    build: backend
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - REFRESH_KEY=${REFRESH_KEY}
+      - API_KEY=${API_KEY}
+      - USER_ID=${USER_ID}
+      - USER_NAME=${USER_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_ADDRESS=${DB_ADDRESS}
+      - DB_NAME=${DB_NAME}
+      - DB_PORT=${DB_PORT}
+  proxy:
+    build: proxy
+    ports:
+      - 80:80
+    depends_on:
+      - backend
