@@ -1,9 +1,7 @@
 package handler
 
 import (
-	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -14,6 +12,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// DatabaseConnection prod server
 func DatabaseConnection() (*gorm.DB, error) {
 	config := database.ConfigList{
 		DbDriverName:   "mysql",
@@ -31,6 +30,20 @@ func DatabaseConnection() (*gorm.DB, error) {
 	return db, nil
 }
 
+// DatabaseConnection localhost server
+// func DatabaseConnection() (*gorm.DB, error) {
+// 	// ---------------------------
+// 	config, err := database.NewLocalDB("user", "password", "vtuber")
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	db, err := config.Connect()
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return db, nil
+// 	// -----------------------------
+// }
 func Getenv(key string) (string, error) {
 	value := os.Getenv(key)
 	if len(value) == 0 {
@@ -75,17 +88,6 @@ type RequestVtuber struct {
 }
 
 func RegisterVtuber(c *gin.Context) {
-	// ---------------------------
-	// config, err := database.NewLocalDB("user", "password", "vtuber")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// db, err := config.Connect()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// -----------------------------
-
 	db, err := DatabaseConnection()
 	if err != nil {
 		c.JSON(500, appErrors.ErrMeatdataMsg(err, appErrors.ServerError))
@@ -129,55 +131,4 @@ func RegisterVtuber(c *gin.Context) {
 		}
 	}
 	c.JSON(201, vtuber)
-}
-
-func RegisterVtuberJsonFile(c *gin.Context) {
-	// ---------------------------
-	// config, err := database.NewLocalDB("user", "password", "vtuber")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// db, err := config.Connect()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// -----------------------------
-	db, err := DatabaseConnection()
-	if err != nil {
-		c.JSON(500, appErrors.ErrMeatdataMsg(err, appErrors.ServerError))
-		return
-	}
-	defer db.Close()
-
-	vDataBytes, err := ioutil.ReadFile("./vtuber-data/vtuber-req.json")
-	if err != nil {
-		c.JSON(500, appErrors.ErrMeatdataMsg(err, appErrors.ServerError))
-		return
-	}
-
-	type reqVtubers struct {
-		Data []RequestVtuber `json:"data"`
-	}
-	reqV := &reqVtubers{}
-	if err := json.Unmarshal(vDataBytes, reqV); err != nil {
-		c.JSON(500, appErrors.ErrMeatdataMsg(err, appErrors.ServerError))
-		return
-	}
-	vtuber := &Vtuber{}
-	vtuberType := &VtuberType{}
-	for _, vd := range reqV.Data {
-		if err := db.Model(vtuber).Where("channel_id = ?", vd.ChannelID).
-			Updates(&Vtuber{
-				Name:        vd.Name,
-				ChannelID:   vd.ChannelID,
-				Affiliation: vd.Affiliation,
-			}).Error; err != nil {
-			c.JSON(500, appErrors.ErrMeatdataMsg(err, appErrors.ErrRecordDatabase))
-			return
-		}
-
-		// db.Model(&VtuberType{}).Where("vtuber_id = ?",vtuber.ID).Find([]VtuberType{})
-		db.Model(vtuberType).Where("vtuber_id = ?", vtuber.ID).Update()
-	}
-	c.JSON(200, gin.H{"status": "ok"})
 }
