@@ -28,14 +28,6 @@ func FitchRandVtuber(c *gin.Context) {
 	vAffiliation := c.Param("affiliations")
 	vType := c.Param("types")
 
-	// config, err := database.NewLocalDB("user", "password", "vtuber")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// db, err := config.Connect()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
 	db, err := DatabaseConnection()
 	if err != nil {
 		c.JSON(500, appErrors.ErrMeatdataMsg(err, appErrors.ServerError))
@@ -63,10 +55,10 @@ func FitchRandVtuber(c *gin.Context) {
 	}
 
 	res := []uint{}
-	for _, vid := range vtuberIDs {
+	for i, vid := range vtuberIDs {
 		for _, v := range vtuberTypes {
 			if vid == v.VtuberID {
-				res = append(res, vid)
+				res = append(res, uint(i))
 			}
 		}
 	}
@@ -75,21 +67,18 @@ func FitchRandVtuber(c *gin.Context) {
 		c.JSON(400, gin.H{"status": "not found vtuber"})
 		return
 	}
+	if len(vtubers) == 0 {
+		c.JSON(400, gin.H{"status": "not found vtuber"})
+		return
+	}
+
 	rand.Seed(time.Now().UnixNano())
 	n := rand.Intn(len(res))
 
-	url := "https://www.youtube.com/channel/" + vtubers[res[n]-1].ChannelID
-	c.JSON(200, gin.H{"name": vtubers[res[n]-1].Name, "url": url})
+	url := "https://www.youtube.com/channel/" + vtubers[res[n]].ChannelID
+	c.JSON(200, gin.H{"name": vtubers[res[n]].Name, "url": url})
 }
 func SearchVtuber(c *gin.Context) {
-	// config, err := database.NewLocalDB("user", "password", "vtuber")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// db, err := config.Connect()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
 	db, err := DatabaseConnection()
 	if err != nil {
 		c.JSON(500, appErrors.ErrMeatdataMsg(err, appErrors.ServerError))
