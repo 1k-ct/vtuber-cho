@@ -78,6 +78,15 @@
                 "animal",
                 "idle-talk"
             ]
+        },
+        {
+            "name": "Marine Ch. 宝鐘マリン",
+            "channel_id": "UCCzUftO8KOVkV4wQG1vkUvg",
+            "affiliation": "hololive",
+            "types": [
+                "song",
+                "idle-talk"
+            ]
         }
     ]
 }
