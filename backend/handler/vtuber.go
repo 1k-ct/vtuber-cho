@@ -1,130 +1,139 @@
 package handler
 
 import (
+	"encoding/json"
+	"errors"
+	"fmt"
 	"math/rand"
-	"net/http"
 	"time"
 
-	"github.com/1k-ct/twitter-dem/pkg/appErrors"
 	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
+	"github.com/thedevsaddam/gojsonq/v2"
 )
 
+const FILE_PATH = "./../vtuber-data/vtuber-req.json"
+
+type Item struct {
+	Types []string `json:"types"`
+}
+type Data struct {
+	VtuberData []Vtuber `json:"data"`
+}
 type Vtuber struct {
-	gorm.Model
-	Name        string
-	ChannelID   string
-	Affiliation string
-}
-type VtuberType struct {
-	gorm.Model
-	VtuberID uint
-	Types    string
+	Name        string   `json:"name"`
+	ChannelID   string   `json:"channel_id"`
+	Affiliation string   `json:"affiliation"`
+	Types       []string `json:"types"`
 }
 
-// FitchRandVtuber /:affiliations/:types 条件に合ったvtuberをランダムに紹介する
-func FitchRandVtuber(c *gin.Context) {
-	vAffiliation := c.Param("affiliations")
-	vType := c.Param("types")
+type UserResponse struct {
+	RequestMethod string      `json:"RequestMethod"`
+	Result        interface{} `json:"Result"`
+}
 
-	db, err := DatabaseConnection()
+func HandlerRandItem(c *gin.Context) {
+	result := &UserResponse{}
+	affiliationParam := c.Param("affiliations")
+	typeParam := c.Param("types")
+
+	if affiliationParam == "" && typeParam == "" {
+		result.Result = errors.New("the url is incorrect")
+		c.JSON(400, result)
+		return
+	}
+
+	res, err := FindItems(FILE_PATH, affiliationParam, typeParam)
 	if err != nil {
-		c.JSON(500, appErrors.ErrMeatdataMsg(err, appErrors.ServerError))
+		c.JSON(500, res)
 		return
 	}
-	defer db.Close()
+	var response struct {
+		Name string
+		URL  string
+	}
+	response.Name = res.Name
+	response.URL = fmt.Sprintf("https://www.youtube.com/channel/%v", res.ChannelID)
 
-	// db　から条件に合ったvtuberを取得
-	vtuber := &Vtuber{}
-	vtubers := []*Vtuber{}
-	if err := db.Model(&vtuber).Where("affiliation = ?", vAffiliation).Find(&vtubers).Error; err != nil {
-		c.JSON(400, gin.H{"status": "not found affiliation"})
+	result.RequestMethod = "GET"
+	result.Result = response
+
+	c.JSON(200, result)
+}
+func HandlerItemSearch(c *gin.Context) {
+	result := &UserResponse{}
+	channelID := c.Param("channel")
+	v, err := FitchItem(FILE_PATH, channelID)
+	if err != nil {
+		result.Result = errors.New("server error: json file error")
+		c.JSON(500, result)
 		return
 	}
-	vtuberIDs := []uint{}
-	for _, v := range vtubers {
-		vtuberIDs = append(vtuberIDs, v.ID)
+	result.Result = v
+	c.JSON(200, result)
+}
+func FindItems(file, targetAffiliation, targetType string) (*Vtuber, error) {
+	item := []int{}
+	dataCou := gojsonq.New().File(file).From("data").Count()
+
+	for i := 0; i < dataCou; i++ {
+		typesForm := fmt.Sprintf("data.[%v].types", i)
+		res, err := gojsonq.New().File(file).From(typesForm).GetR()
+		if err != nil {
+			return nil, err
+		}
+		r, _ := res.StringSlice()
+
+		affForm := fmt.Sprintf("data.[%v].affiliation", i)
+		affiliations, err := gojsonq.New().File(file).From(affForm).GetR()
+		if err != nil {
+			return nil, err
+		}
+		affiliation, _ := affiliations.String()
+
+		if targetAffiliation == affiliation && stringInSlice(targetType, r) {
+			item = append(item, i)
+		}
+	}
+	rand.Seed(time.Now().UnixNano())
+	n := rand.Intn(len(item))
+
+	resForm := fmt.Sprintf("data.[%v]", item[n])
+	res := gojsonq.New().File(file).From(resForm).Get()
+	// ress := res.(map[string]interface{})
+	b, err := json.Marshal(res)
+	if err != nil {
+		return nil, err
 	}
 
-	vtuberType := &VtuberType{}
-	vtuberTypes := []*VtuberType{}
-	if err := db.Model(&vtuberType).Where("types = ?", vType).Find(&vtuberTypes).Error; err != nil {
-		c.JSON(400, gin.H{"status": "not found affiliation"})
-		return
+	v := &Vtuber{}
+	if err := json.Unmarshal(b, v); err != nil {
+		return nil, err
+	}
+	return v, nil
+}
+func marshalVtuber(obj interface{}) (*Vtuber, error) {
+	b, err := json.Marshal(obj)
+	if err != nil {
+		return nil, err
 	}
 
-	res := []uint{}
-	for i, vid := range vtuberIDs {
-		for _, v := range vtuberTypes {
-			if vid == v.VtuberID {
-				res = append(res, uint(i))
-			}
+	v := &Vtuber{}
+	if err := json.Unmarshal(b, v); err != nil {
+		return nil, err
+	}
+	return v, nil
+}
+func FitchItem(file, channelID string) (interface{}, error) {
+	res := gojsonq.New().File(file).From("data").
+		Where("channel_id", "=", channelID).Get()
+	return res, nil
+}
+func stringInSlice(a string, slice []string) bool {
+	for _, b := range slice {
+		if b == a {
+			return true
 		}
 	}
 
-	if len(res) == 0 {
-		c.JSON(400, gin.H{"status": "not found vtuber"})
-		return
-	}
-	if len(vtubers) == 0 {
-		c.JSON(400, gin.H{"status": "not found vtuber"})
-		return
-	}
-
-	rand.Seed(time.Now().UnixNano())
-	n := rand.Intn(len(res))
-
-	url := "https://www.youtube.com/channel/" + vtubers[res[n]].ChannelID
-	c.JSON(200, gin.H{"name": vtubers[res[n]].Name, "url": url})
-}
-func SearchVtuber(c *gin.Context) {
-	db, err := DatabaseConnection()
-	if err != nil {
-		c.JSON(500, appErrors.ErrMeatdataMsg(err, appErrors.ServerError))
-		return
-	}
-	defer db.Close()
-
-	q := c.Query("q")
-
-	vtuber := &Vtuber{}
-	if err := db.Where("channel_id = ?", q).First(&vtuber).Error; err != nil {
-		c.JSON(400, gin.H{"status": "not found affiliation"})
-		return
-	}
-	if vtuber == nil {
-		c.JSON(http.StatusNoContent, nil)
-		return
-	}
-	vtuberType := &VtuberType{}
-	vtuberTypes := []*VtuberType{}
-	if err := db.Model(&vtuberType).Where("vtuber_id = ?", vtuber.ID).
-		Find(&vtuberTypes).Error; err != nil {
-		c.JSON(500, appErrors.ErrMeatdataMsg(err, appErrors.ErrRecordDatabase))
-		return
-	}
-
-	types := []string{}
-	for _, v := range vtuberTypes {
-		types = append(types, v.Types)
-	}
-	type resp struct {
-		ID          uint
-		CreatedAt   time.Time
-		UpdatedAt   time.Time
-		Name        string
-		ChannelID   string
-		Affiliation string
-		Types       []string
-	}
-	c.JSON(200, resp{
-		ID:          vtuber.ID,
-		CreatedAt:   vtuber.CreatedAt,
-		UpdatedAt:   vtuber.UpdatedAt,
-		Name:        vtuber.Name,
-		ChannelID:   vtuber.ChannelID,
-		Affiliation: vtuber.Affiliation,
-		Types:       types,
-	})
+	return false
 }
