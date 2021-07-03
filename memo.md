@@ -34,10 +34,12 @@ api/v1/search&q=
 |15|mine-craft||
 |16|anthro|擬人化、人外 the outside of human world|
 |17|ecchi||
-|18|big breast|胸|
-|19|small breast||
-|20|idle talk|雑談|
-|21|long stream||
+|18|big-breast|胸|
+|19|small-breast||
+|20|idle-talk|雑談|
+|21|long-stream||
+|22|dog||
+|22|ogya||
 
 
 Continue               = 100 
