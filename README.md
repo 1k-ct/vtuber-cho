@@ -5,6 +5,8 @@ Are you troubled? Here are some vtuber recommendations for you.
   
 ## APIs
 
+## ALL VTUBER LIST :[Link](https://github.com/1k-ct/vtuber-cho/blob/main/vtuber-data/vtuber-req.json)  
+
 ### Here are some random vtuber recommendations for you. 
 
 - Please select an affiliations and types  
