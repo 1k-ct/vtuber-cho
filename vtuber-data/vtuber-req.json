@@ -87,6 +87,224 @@
                 "song",
                 "idle-talk"
             ]
+        },
+        {
+            "name": "Coco Ch. 桐生ココ",
+            "channel_id": "UCS9uQI-jC3DE0L4IpXyvr6w",
+            "affiliation": "hololive",
+            "types": [
+                "animal",
+                "anthro",
+                "idle-talk"
+            ]
+        },
+        {
+            "name": "hololive ホロライブ - VTuber Group",
+            "channel_id": "UCJFZiqLMntJufDCHc6bQixg",
+            "affiliation": "hololive",
+            "types": [
+                "video"
+            ]
+        },
+        {
+            "name": "Aqua Ch. 湊あくあ",
+            "channel_id": "UC1opHUrw8rvnsadT-iGp7Cg",
+            "affiliation": "hololive",
+            "types": [
+                "song",
+                "game",
+                "small-breast"
+            ]
+        },
+        {
+            "name": "Watson Amelia Ch. hololive-EN",
+            "channel_id": "UCyl1z3jo3XHR1riLFKG5UAg",
+            "affiliation": "hololive",
+            "types": [
+                "english"
+            ]
+        },
+        {
+            "name": "Nyanners",
+            "channel_id": "UCO5Jvsc_sKuZi3MhnJxrlzQ",
+            "affiliation": "hololive",
+            "types": [
+                "cat",
+                "english",
+                "loli"
+            ]
+        },
+        {
+            "name": "Rushia Ch. 潤羽るしあ",
+            "channel_id": "UCl_gCybOJRIgOXw6Qb4qJzQ",
+            "affiliation": "hololive",
+            "types": [
+                "asmr",
+                "loli",
+                "seiso",
+                "small-breast"
+            ]
+        },
+        {
+            "name": "Noel Ch. 白銀ノエル",
+            "channel_id": "UCdyqAaZDKHXg4Ahi7VENThQ",
+            "affiliation": "hololive",
+            "types": [
+                "asmr",
+                "ecchi",
+                "big-breast"
+            ]
+        },
+        {
+            "name": "Akaihaato Ch. 赤井はあと",
+            "channel_id": "UC1CfXB_kRs3C-zaeTG3oGyg",
+            "affiliation": "hololive",
+            "types": [
+                "song",
+                "english",
+                "long-stream"
+            ]
+        },
+        {
+            "name": "Okayu Ch. 猫又おかゆ",
+            "channel_id": "UCvaTdHTWBGv3MKj3KVqJVCw",
+            "affiliation": "hololive",
+            "types": [
+                "animal",
+                "cat",
+                "song"
+            ]
+        },
+        {
+            "name": "Miko Ch. さくらみこ",
+            "channel_id": "UC-hM6YJuNYVAmUWxeIr9FeA",
+            "affiliation": "hololive",
+            "types": [
+                "game",
+                "loli",
+                "long-stream"
+            ]
+        },
+        {
+            "name": "Takanashi Kiara Ch. hololive-EN",
+            "channel_id": "UCHsx4Hqa-1ORjQTh9TYDhww",
+            "affiliation": "hololive",
+            "types": [
+                "english",
+                "long-stream"
+            ]
+        },
+        {
+            "name": "Ninomae Ina'nis Ch. hololive-EN",
+            "channel_id": "UCMwGHR0BTZuLsmjY_NT5Pwg",
+            "affiliation": "hololive",
+            "types": [
+                "english",
+                "anthro"
+            ]
+        },
+        {
+            "name": "Matsuri Channel 夏色まつり",
+            "channel_id": "UCQ0UDLQCjY0rmuxCDE38FGg",
+            "affiliation": "hololive",
+            "types": [
+                "game"
+            ]
+        },
+        {
+            "name": "Suisei Channel",
+            "channel_id": "UC5CwaMl1eIgY8h02uZw7u8A",
+            "affiliation": "hololive",
+            "types": [
+                "song",
+                "seiso"
+            ]
+        },
+        {
+            "name": "Subaru Ch. 大空スバル",
+            "channel_id": "UCvzGlP9oQwU--Y0r9id_jnA",
+            "affiliation": "hololive",
+            "types": [
+                "seiso"
+            ]
+        },
+        {
+            "name": "Nakiri Ayame Ch. 百鬼あやめ",
+            "channel_id": "UC7fk0CB07ly8oSl0aqKkqFg",
+            "affiliation": "hololive",
+            "types": [
+                "loli",
+                "anthro",
+                "idle-talk"
+            ]
+        },
+        {
+            "name": "Watame Ch. 角巻わため",
+            "channel_id": "UCqm3BQLlJfvkTsX_hvm0UmA",
+            "affiliation": "hololive",
+            "types": [
+                "animal",
+                "song"
+            ]
+        },
+        {
+            "name": "Kaguya Luna Official",
+            "channel_id": "UCQYADFw7xEJ9oZSM5ZbqyBw",
+            "affiliation": "other",
+            "types": [
+                "song"
+            ]
+        },
+        {
+            "name": "Kanata Ch. 天音かなた",
+            "channel_id": "UCZlDXzGoo7d44bwdNObFacg",
+            "affiliation": "hololive",
+            "types": [
+                "loli",
+                "seiso"
+            ]
+        },
+        {
+            "name": "Botan Ch.獅白ぼたん",
+            "channel_id": "UCUKD-uaobj9jiqB-VXt71mA",
+            "affiliation": "hololive",
+            "types": [
+                "animal",
+                "game"
+            ]
+        },
+        {
+            "name": "Kuzuha Channel",
+            "channel_id": "UCSFCh5NL4qXrAy9u-u2lX3g",
+            "affiliation": "hololive",
+            "types": [
+                "game",
+                "male"
+            ]
+        },
+        {
+            "name": "SoraCh. ときのそらチャンネル",
+            "channel_id": "UCp6993wxpyDPHUpavwDFqgg",
+            "affiliation": "hololive",
+            "types": [
+                "song",
+                "seiso",
+                "video"
+            ]
+        },
+        {
+            "name": "小犬丸ぽめ / Koinumaru Pome【Melpoプロダクション】",
+            "channel_id": "UCQvNK2OpeT0DA5h0qANXvUw",
+            "affiliation": "other",
+            "types": [
+                "animal",
+                "dog",
+                "ecchi",
+                "big-breast",
+                "idle-talk",
+                "long-stream",
+                "ogya"
+            ]
         }
     ]
 }
