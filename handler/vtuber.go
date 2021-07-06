@@ -62,7 +62,7 @@ func HandlerRandItem(c *gin.Context) {
 func HandlerItemSearch(c *gin.Context) {
 	result := &UserResponse{}
 	channelID := c.Param("channel")
-	v, err := FitchItem(FILE_PATH, channelID)
+	v, err := FetchItem(FILE_PATH, channelID)
 	if err != nil {
 		result.Result = errors.New("server error: json file error")
 		c.JSON(500, result)
@@ -123,7 +123,7 @@ func marshalVtuber(obj interface{}) (*Vtuber, error) {
 	}
 	return v, nil
 }
-func FitchItem(file, channelID string) (interface{}, error) {
+func FetchItem(file, channelID string) (interface{}, error) {
 	res := gojsonq.New().File(file).From("data").
 		Where("channel_id", "=", channelID).Get()
 	return res, nil
