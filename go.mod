@@ -1,6 +1,6 @@
 module github.com/1k-ct/vtuber-cho
 
-go 1.16
+go 1.13
 
 require (
 	github.com/gin-gonic/gin v1.7.2
