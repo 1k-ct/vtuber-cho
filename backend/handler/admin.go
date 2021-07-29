@@ -81,10 +81,10 @@ func FitchJwt(c *gin.Context) {
 }
 
 type RequestVtuber struct {
-	Name        string   `json:"name"`
-	ChannelID   string   `json:"channel_id"`
-	Affiliation string   `json:"affiliation"`
-	Types       []string `json:"types"`
+	Name        string
+	ChannelID   string
+	Affiliation string
+	VtuberTags  []string
 }
 
 func RegisterVtuber(c *gin.Context) {
@@ -95,40 +95,29 @@ func RegisterVtuber(c *gin.Context) {
 	}
 	defer db.Close()
 
-	requestVtuber := &RequestVtuber{}
+	reqVtuber := &RequestVtuber{}
 
-	if err := c.BindJSON(&requestVtuber); err != nil {
+	if err := c.BindJSON(&reqVtuber); err != nil {
 		c.JSON(400, appErrors.ErrMeatdataMsg(err, appErrors.ErrorJSON))
 		return
 	}
+	tag := []VtuberTag{}
+	for _, v := range reqVtuber.VtuberTags {
+		t := VtuberTag{Tag: v}
+		tag = append(tag, t)
+	}
 	vtuber := &Vtuber{
-		Name:        requestVtuber.Name,
-		ChannelID:   requestVtuber.ChannelID,
-		Affiliation: requestVtuber.Affiliation,
+		Name:        reqVtuber.Name,
+		ChannelID:   reqVtuber.ChannelID,
+		Affiliation: reqVtuber.Affiliation,
+		VtuberTags:  tag,
 	}
-	vtubers := []*Vtuber{}
-	res := db.Where("channel_id = ?", requestVtuber.ChannelID).Find(&vtubers)
-	if res.RowsAffected != 0 {
-		c.JSON(400, gin.H{"status": "It's already created"})
-		return
-	}
-	if res.Error != nil {
+
+	v, err := RegisterDatabaseVtuber(vtuber)
+	if err != nil {
 		c.JSON(500, appErrors.ErrMeatdataMsg(err, appErrors.ServerError))
 		return
 	}
-	if err := db.Create(vtuber).Error; err != nil {
-		c.JSON(500, appErrors.ErrMeatdataMsg(err, appErrors.ServerError))
-		return
-	}
-	for _, t := range requestVtuber.Types {
-		vtuberType := &VtuberType{
-			VtuberID: vtuber.ID,
-			Types:    t,
-		}
-		if err := db.Create(vtuberType).Error; err != nil {
-			c.JSON(500, appErrors.ErrMeatdataMsg(err, appErrors.ServerError))
-			return
-		}
-	}
-	c.JSON(201, vtuber)
+
+	c.JSON(201, v)
 }
