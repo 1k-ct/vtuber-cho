@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -72,6 +73,9 @@ func HandlerItemSearch(c *gin.Context) {
 	c.JSON(200, result)
 }
 func FindItems(file, targetAffiliation, targetType string) (*Vtuber, error) {
+	if _, err := os.Stat(file); errors.Is(err, os.ErrNotExist) {
+		return nil, errors.New("file not found")
+	}
 	item := []int{}
 	dataCou := gojsonq.New().File(file).From("data").Count()
 
