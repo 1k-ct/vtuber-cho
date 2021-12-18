@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  go:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./logs:/go/src/vtuber-cho/logs
+    ports:
+      - "8000:8000"

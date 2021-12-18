@@ -1,4 +1,4 @@
-module github.com/1k-ct/vtuber-cho
+module vtuber-cho
 
 go 1.13
 
