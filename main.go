@@ -4,8 +4,8 @@ import (
 	"io"
 	"log"
 	"os"
+	"vtuber-cho/handler"
 
-	"github.com/1k-ct/vtuber-cho/handler"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,7 +15,7 @@ import (
 
 func main() {
 	gin.DisableConsoleColor()
-	f, _ := os.Create("gin.log")
+	f, _ := os.Create("./logs/gin.log")
 	gin.SetMode(gin.ReleaseMode)
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 

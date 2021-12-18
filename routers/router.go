@@ -1,7 +1,8 @@
 package routers
 
 import (
-	"github.com/1k-ct/vtuber-cho/handler"
+	"vtuber-cho/handler"
+
 	"github.com/gin-gonic/gin"
 )
 
